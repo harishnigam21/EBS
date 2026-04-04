@@ -8,7 +8,7 @@ export const registerSchema = z.object({
     .max(50, "Name too long"),
 
   email: z.string().trim().toLowerCase().email("Invalid email format"),
-
+  role: z.enum(["USER", "ADMIN"]).default("USER"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")

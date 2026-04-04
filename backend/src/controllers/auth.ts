@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import { prisma } from "../prisma/client";
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
   try {
     const encrypted = await bcrypt.hash(password, 10);
     await prisma.user.create({
@@ -11,6 +11,7 @@ export const register = async (req: Request, res: Response) => {
         name,
         email,
         password: encrypted,
+        role: role || "USER",
       },
     });
     return res.status(201).json({ message: "Successfully Registered" });
@@ -35,7 +36,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Invalid password" });
     }
     const accessToken = jwt.sign(
-      { id: user.id },
+      { id: user.id, role: user.role },
       process.env.ACCESS_TOKEN_KEY as string,
       { expiresIn: "1d" },
     );

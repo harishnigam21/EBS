@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { decode } from "node:punycode";
 
 export interface AuthRequest extends Request {
   userId?: number;
+  userRole?: string;
 }
 
 export const authenticate = (
@@ -22,12 +24,12 @@ export const authenticate = (
     const decoded = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_KEY as string,
-    ) as { id: number };
-
+    ) as { id: number; role: string };
     req.userId = decoded.id;
-
+    req.userRole = decoded.role;
     next();
-  } catch {
+  } catch (error) {
+    console.error("Error while verifying : ", error);
     res.status(401).json({ message: "Invalid token" });
   }
 };

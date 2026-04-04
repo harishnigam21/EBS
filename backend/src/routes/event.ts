@@ -1,11 +1,17 @@
-import { Router } from 'express';
-import * as EventController from '../controllers/event';
-import { CreateEventSchema } from '../validations/schemas';
-import { validate } from '../middlewars/validate';
+import { Router } from "express";
+import * as EventController from "../controllers/event";
+import { CreateEventSchema } from "../validations/schemas";
+import { validate } from "../middlewars/validate";
+import { authenticate } from "../middlewars/auth";
 
 const router = Router();
 
-router.get('/', EventController.getAllEvents); 
-router.post('/', validate(CreateEventSchema), EventController.createEvent); 
+router.get("/", EventController.getAllEvents);
+router.post(
+  "/",
+  authenticate,
+  validate(CreateEventSchema),
+  EventController.createEvent,
+);
 
 export default router;
