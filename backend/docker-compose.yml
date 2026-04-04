@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  # Backend App Service
+  app:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=mysql://harish:AVNS_ytUJPdqfd07hjSd8Pdw@harishnigam-harishnigam21.g.aivencloud.com:13720/EBS
+      - ACCESS_TOKEN_KEY=a0f0ee610ca300a765ba39821721a9dc73b4f31acd64b2088d03ae118ab3bb15c5c69a9a30b208fc02e4ea28beeffb787d01334e256fe8658e94471274582431
+      - PORT=3000
+
+volumes:
+  db_data:
