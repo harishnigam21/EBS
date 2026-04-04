@@ -1,0 +1,224 @@
+openapi: 3.0.0
+info:
+  title: Event Booking System API
+  description: Assignment for Junior Node.js Backend Developer
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+paths:
+  # Auth Routes
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string, example: "Harish Nigam" }
+                email: { type: string, example: "harish@example.com" }
+                password: { type: string, example: "password123" }
+                role: { type: string, enum: [USER, ADMIN], default: USER }
+      responses:
+        "201":
+          description: Successfully Registered
+
+  /api/auth/login:
+    post:
+      summary: Login to get Access Token
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, example: "harish@example.com" }
+                password: { type: string, example: "password123" }
+      responses:
+        "200":
+          description: Login successful
+
+  # Event Routes
+  /api/event:
+    get:
+      summary: List all upcoming events
+      tags: [Events-User]
+      responses:
+        "200":
+          description: A list of events
+    post:
+      summary: Create a new event
+      tags: [Events-User]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, date, total_capacity]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                date: { type: string, format: date-time }
+                total_capacity: { type: integer }
+      responses:
+        "201":
+          description: Event created successfully
+
+  # Booking Routes
+  /api/booking:
+    post:
+      summary: Book a ticket
+      tags: [Bookings-User]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId]
+              properties:
+                eventId: { type: integer }
+      responses:
+        "201":
+          description: Booking successful
+    get:
+      summary: Get logged-in user's bookings
+      tags: [Bookings-User]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Success
+
+  /api/booking/attendance:
+    post:
+      summary: Mark attendance for an event
+      tags: [Bookings-User]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bookingCode]
+              properties:
+                bookingCode: { type: string }
+      responses:
+        "200":
+          description: Attendance marked
+
+  # Event Routes
+  /events:
+    get:
+      summary: List all upcoming events
+      tags: [Events-Admin]
+      responses:
+        "200":
+          description: A list of events
+    post:
+      summary: Create a new event
+      tags: [Events-Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, date, total_capacity]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                date: { type: string, format: date-time }
+                total_capacity: { type: integer }
+      responses:
+        "201":
+          description: Event created successfully
+
+  # Booking Routes
+  /bookings:
+    post:
+      summary: Book a ticket
+      tags: [Bookings-Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [eventId]
+              properties:
+                eventId: { type: integer }
+      responses:
+        "201":
+          description: Booking successful
+
+  /users/{id}/bookings:
+    get:
+      summary: Get user's bookings
+      tags: [Bookings-Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The User ID
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+
+  /events/{id}/attendance:
+    post:
+      summary: Mark attendance for an event
+      tags: [Bookings-Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The User ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bookingCode]
+              properties:
+                bookingCode: { type: string }
+      responses:
+        "200":
+          description: Attendance marked
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
