@@ -9,6 +9,12 @@ import path from "path";
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
+swaggerDocument.servers = [
+  {
+    url: process.env.BACKEND_HOST,
+    description: "Dynamic server"
+  }
+];
 app.use(express.json());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/", adminRoutes);
