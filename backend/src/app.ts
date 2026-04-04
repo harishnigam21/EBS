@@ -12,10 +12,15 @@ const swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
 swaggerDocument.servers = [
   {
     url: process.env.BACKEND_HOST,
-    description: "Dynamic server"
-  }
+    description: "Dynamic server",
+  },
 ];
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send(
+    "Event Booking System API is running! Go to /api-docs for documentation.",
+  );
+});
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/", adminRoutes);
 app.use("/api/event", eventRoutes);
