@@ -9,6 +9,7 @@ import path from "path";
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, "../swagger.yaml"));
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 swaggerDocument.servers = [
   {
     url: process.env.BACKEND_HOST,
@@ -21,7 +22,17 @@ app.get("/", (req, res) => {
     "Event Booking System API is running! Go to /api-docs for documentation.",
   );
 });
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    customCssUrl: CSS_URL,
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-bundle.min.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.min.js",
+    ],
+  }),
+);
 app.use("/", adminRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api/booking", bookingRoutes);
